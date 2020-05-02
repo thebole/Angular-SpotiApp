@@ -1,0 +1,120 @@
+class sesion{
+
+    private  $InfSesion=[
+        "Name"=>"_dsr"                // nombre de la cookie
+    ];
+
+    public Function Init_Session(){
+        session_name($this->InfSesion["Name"]);
+        session_start();
+        $this->Verificar_Session();
+    }
+
+    public Function Cerrar_Session(){
+        session_destroy();
+        session_unset();
+    }
+
+  public Function Verificar_Session(){
+
+        if( session_status()== PHP_SESSION_ACTIVE ){
+            if(isset($_SESSION["NICK"])){
+                $session=true;
+            }else{
+                $session=false;
+            }
+        }else if( session_status()== PHP_SESSION_DISABLED ){
+            $this->Cerrar_Sesion();
+            $session=false;
+        }else if( session_status()== PHP_SESSION_NONE ){
+            $this->Cerrar_Sesion();
+            $session=false;
+        }
+        return $session;
+    }
+
+    public function Update_Session($VarName,$VarData){
+        $_SESSION[$VarName]=$VarData;
+    }
+
+    public function Session_Datos(){
+        return $_SESSION;
+    }
+
+    public function getNickSesion(){
+        return $_SESSION["NICK"];
+    }
+    public function Update_Session($VarName,$VarData){
+        $_SESSION[$VarName]=$VarData;
+    }
+
+    public function Session_Datos(){
+        return $_SESSION;
+    }
+
+    public function getNickSesion(){
+        return $_SESSION["NICK"];
+    }
+
+    public function getEmailSesion(){
+        return $_SESSION["EMAIL"];
+    }
+
+    public function getNameSesion(){
+        return $_SESSION["NAME"];
+    }
+
+    public function getLevelSesion(){
+        return $_SESSION["LEVEL"];
+    }
+
+    public function getControlSesion(){
+        if(isset($_SESSION["CONTROL"])){
+            return $_SESSION["CONTROL"];
+        }
+    }
+
+    //consuming http in angularjs
+    $par = json_decode(file_get_contents('php://input'),true);
+
+switch ($par["_op"]){
+    case "lg":
+        include 'module/login.php';
+        $lg = new login();
+        echo json_encode($lg->validate($par['user'], $par['pass']),JSON_UNESCAPED_UNICODE);
+    break;
+    case "add":
+        include 'module/die.php';
+        $lg = new die_cut();
+        echo json_encode($lg->add_die($par['_dt']),JSON_UNESCAPED_UNICODE);
+    break;
+    case "list":
+        include 'module/die.php';
+        $lg = new die_cut();
+        echo json_encode($lg->list_die(),JSON_UNESCAPED_UNICODE);
+    break;
+    case "type":
+        include 'module/die.php';
+        $lg = new die_cut();
+        echo json_encode($lg->list_type(),JSON_UNESCAPED_UNICODE);
+    break;
+
+}
+
+if(isset($_POST["_op"])){
+    switch ($_POST["_op"]){
+        case "up":
+            include 'module/die.php';
+            $lg = new die_cut();
+            echo json_encode($lg->upload_die($_POST["key"],$_POST["coded"],$_FILES),JSON_UNESCAPED_UNICODE);
+        break;
+    }
+}
+
+if(isset($_GET["_op"])){
+    switch ($_GET["_op"]){
+        case "list":
+            include 'theme/main/list.min.html';
+        break;
+    }
+}
